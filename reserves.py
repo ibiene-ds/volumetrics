@@ -12,7 +12,7 @@ def pseudocritical_temperature(sg: float) -> float:
 
 def pseudocrititcal_pressure(sg: float) -> float:
     # result is in psi
-    return 677.0 + 15.0 *sg - 27.5 * sg * sg 
+    return 677.0 + 15.0 *sg - 37.5 * sg * sg 
 
 def compressibility(sg: float, p: float, t: float) -> float:
     # p is in psi
@@ -26,22 +26,22 @@ def gas_fvf(z: float, p: float, t: float)-> float:
     # p is in psi
     # p is in deg F
     # result is in res cf/ std cf 
-    return 0.02827 * z *(t + 459.67)
+    return 0.02827 * z *(t + 459.67) / p
 
 def solution_gor(oil_api: float, gas_sg: float, p: float, t: float) -> float:
     # p is in psi
     # t is in deg F
     # gor is in scf/bbl
-    a  = 10 ** (2.8869 - sqrt(14.1811 - 3.3093)* log10(p))
-    return gas_sg*(oil_api ** 0.989/t**0.172 *a)** 1.12255
+    a  = 10.0 ** (2.8869 - sqrt(14.1811 - 3.3093 * log10(p)))
+    return gas_sg * (oil_api ** 0.989 / t ** 0.172 * a) ** 1.2255
 
 def oil_fvf(gor: float, oil_api: float, gas_sg: float, t: float)-> float:
     # t is in deg F
     # gor is ins scf/bbl 
     oil_sg = 141.5/(131.5 + oil_api)
     bob_star = log10(gor *(gas_sg/oil_sg)** 0.526 + 0.968*t)
-    expt = -6.58511 + 2.91329 *bob_star-0.27683*bob_star*bob_star+1.0
-    return 10.0 ** expt
+    expt = -6.58511 + 2.91329 * bob_star - 0.27683* bob_star* bob_star
+    return 1.0 + 10.0 ** expt
 
 def original_in_place(area: float, height: float, porosity: float, 
          sw: float, fvf: float, phase: Phase) -> float:
